@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>아날로그 시계 배움터 - 초등 2학년 맞춤</title>
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Navigation Header (shadcn style) -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-icon">
+          <i data-lucide="clock"></i>
+        </div>
+        <div class="brand-text">
+          <h1>아날로그 시계 배움터</h1>
+          <p>시계 읽기 공부하기 (초등 2학년)</p>
+        </div>
+      </div>
+
+      <!-- Mode Selector Tabs -->
+      <div class="shadcn-tabs">
+        <button id="tab-explore" class="tab-item active" onclick="setMode('explore')">
+          <i data-lucide="compass"></i>
+          <span>탐색하기</span>
+        </button>
+        <button id="tab-quiz-drag" class="tab-item" onclick="setMode('quiz-drag')">
+          <i data-lucide="hand-metal"></i>
+          <span>시계 맞추기</span>
+        </button>
+        <button id="tab-quiz-choice" class="tab-item" onclick="setMode('quiz-choice')">
+          <i data-lucide="help-circle"></i>
+          <span>객관식 퀴즈</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Layout -->
+    <main class="main-content">
+      <!-- Left: Analog Clock Card -->
+      <section class="clock-card card">
+        <div class="card-header">
+          <div class="header-title">
+            <i data-lucide="disc"></i>
+            <h2>아날로그 시계</h2>
+          </div>
+          <!-- Guide & Sound Toggles -->
+          <div class="guide-toggle-wrapper" style="display: flex; gap: 1rem;">
+            <label class="shadcn-switch">
+              <input type="checkbox" id="toggle-sound" checked>
+              <span class="switch-slider"></span>
+              <span class="switch-text">🔊 효과음</span>
+            </label>
+            <label class="shadcn-switch">
+              <input type="checkbox" id="toggle-minute-numbers" checked onchange="toggleMinuteNumbers()">
+              <span class="switch-slider"></span>
+              <span class="switch-text">분 숫자</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Clock Display Container -->
+        <div class="clock-viewport">
+          <div class="analog-clock" id="analog-clock">
+            <div class="clock-face" id="clock-face">
+              <!-- Center Hub -->
+              <div class="clock-center"></div>
+
+              <!-- Hour Hand -->
+              <div class="hand hour-hand" id="hour-hand">
+                <div class="hand-cap"></div>
+              </div>
+
+              <!-- Minute Hand -->
+              <div class="hand minute-hand" id="minute-hand">
+                <div class="hand-cap"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="clock-footer-hint">
+          <i data-lucide="volume-2"></i>
+          <span>바늘을 움직이면 째깍째깍 경쾌한 효과음이 들려요!</span>
+        </div>
+      </section>
+
+      <!-- Right: Controls & Mode Panels -->
+      <section class="control-panel-section">
+        <!-- 1. Explore Mode Panel -->
+        <div id="panel-explore" class="mode-panel active">
+          <!-- Digital Clock Sync Card -->
+          <div class="card digital-card">
+            <div class="card-header">
+              <div class="header-title">
+                <i data-lucide="monitor"></i>
+                <h2>디지털 시계</h2>
+              </div>
+            </div>
+
+            <div class="digital-clock-display">
+              <div class="digit-group">
+                <div class="digit-box"><span id="digital-hour">10</span></div>
+                <span class="colon">:</span>
+                <div class="digit-box"><span id="digital-minute">00</span></div>
+              </div>
+            </div>
+
+            <div class="time-sentence" id="time-sentence">
+              10시 정각
+            </div>
+          </div>
+
+          <!-- Quick Time Buttons Card -->
+          <div class="card preset-card">
+            <h3>쉬운 시간 바로 맞추기</h3>
+            <div class="preset-grid">
+              <button class="shadcn-btn btn-outline" onclick="setTime12(9, 0)">9시 정각 🕘</button>
+              <button class="shadcn-btn btn-outline" onclick="setTime12(12, 30)">12시 30분 🕧</button>
+              <button class="shadcn-btn btn-outline" onclick="setTime12(3, 15)">3시 15분 🕒</button>
+              <button class="shadcn-btn btn-outline" onclick="setTime12(6, 45)">6시 45분 🕕</button>
+              <button class="shadcn-btn btn-outline" onclick="setTime12(10, 10)">10시 10분 🕙</button>
+              <button class="shadcn-btn btn-secondary" onclick="setTimeToCurrent()">현재 시간 🕒</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Quiz Mode: Drag Hands Panel -->
+        <div id="panel-quiz-drag" class="mode-panel">
+          <div class="card quiz-card">
+            <div class="card-header">
+              <div class="header-title">
+                <i data-lucide="target"></i>
+                <h2>미션: 시계 바늘을 맞춰보세요</h2>
+              </div>
+            </div>
+
+            <div class="quiz-target-banner">
+              <span class="target-caption">목표 시간</span>
+              <div class="target-time-value" id="drag-quiz-target">3시 30분</div>
+            </div>
+
+            <div class="quiz-feedback-box" id="drag-quiz-feedback">
+              시침과 분침을 위 목표 시간에 맞춰보세요!
+            </div>
+
+            <div class="quiz-action-buttons">
+              <button class="shadcn-btn btn-primary btn-lg" onclick="checkDragQuizAnswer()">
+                <i data-lucide="check-circle-2"></i> 정답 확인하기
+              </button>
+              <button class="shadcn-btn btn-outline" onclick="generateDragQuiz()">
+                <i data-lucide="refresh-cw"></i> 다음 문제
+              </button>
+            </div>
+
+            <div class="score-summary">
+              <div class="score-pill">
+                <span>맞힌 개수</span>
+                <strong id="drag-score-correct">0</strong>
+              </div>
+              <div class="score-pill">
+                <span>연속 기록</span>
+                <strong id="drag-score-streak">0 🔥</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Quiz Mode: Multiple Choice Panel -->
+        <div id="panel-quiz-choice" class="mode-panel">
+          <div class="card quiz-card">
+            <div class="card-header">
+              <div class="header-title">
+                <i data-lucide="help-circle"></i>
+                <h2>객관식 퀴즈: 지금 몇 시일까요?</h2>
+              </div>
+            </div>
+
+            <div class="choice-quiz-prompt">
+              <span>아날로그 시계를 보고 알맞은 시간을 고르세요!</span>
+            </div>
+
+            <!-- 4 Choice Options -->
+            <div class="choice-options-grid" id="choice-options">
+              <!-- Dynamic Choice Cards -->
+            </div>
+
+            <div class="quiz-feedback-box" id="choice-quiz-feedback">
+              알맞은 시간 보기를 클릭하세요.
+            </div>
+
+            <div class="score-summary">
+              <div class="score-pill">
+                <span>맞힌 개수</span>
+                <strong id="choice-score-correct">0</strong>
+              </div>
+              <div class="score-pill">
+                <span>연속 기록</span>
+                <strong id="choice-score-streak">0 🔥</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Toast Notification -->
+    <div class="shadcn-toast" id="toast"></div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>
