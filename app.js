@@ -1,6 +1,6 @@
 /**
  * 지우의 시계읽기 - Grade 2 Edition
- * Modern Clean Code Refactored Architecture (with 3D Ball Joystick Controllers)
+ * Modern Clean Code Refactored Architecture (with 5-Min Precision Snap & 3D Ball Joystick)
  */
 
 // ==========================================
@@ -354,9 +354,20 @@ function onDrag(e) {
   updateDigitalDisplay();
 }
 
+/**
+ * 5-Minute Precision Magnet Snap Engine
+ * Resolves any 1-minute offset error by rounding exact integer minutes to multiples of 5 (0, 5, 10, ... 55)
+ */
 function stopDrag() {
   if (state.isDragging) {
-    state.totalMinutes12 = (Math.round(state.totalMinutes12 / 5) * 5) % 720;
+    // Step 1: Round to exact integer minute
+    const exactMins = Math.round(state.totalMinutes12);
+    // Step 2: Snap exactly to nearest 5-minute mark (0, 5, 10, ... 55, 60)
+    const snappedMins = Math.round(exactMins / 5) * 5;
+    
+    // Step 3: Modulo 720 for 12-hour clock boundary condition safety
+    state.totalMinutes12 = (snappedMins + 720) % 720;
+
     renderClockHands();
     updateDigitalDisplay();
     playSnapSound();
@@ -369,13 +380,15 @@ function renderClockHands() {
   const hourHandEl = document.getElementById('hour-hand');
   const minuteHandEl = document.getElementById('minute-hand');
 
+  // Exact minute angle (6 deg per minute)
   const minuteAngle = (state.totalMinutes12 % 60) * 6;
+  // Exact hour angle (0.5 deg per minute = 360 deg per 720 minutes)
   const hourAngle = (state.totalMinutes12 / 720) * 360;
 
   if (minuteHandEl) minuteHandEl.style.transform = `translateX(-50%) rotate(${minuteAngle}deg)`;
   if (hourHandEl) hourHandEl.style.transform = `translateX(-50%) rotate(${hourAngle}deg)`;
 
-  // Also rotate 3D Joystick Spheres for visual feedback!
+  // Rotate 3D Joystick Spheres for visual feedback
   if (DOM.hourBall) DOM.hourBall.style.transform = `rotate(${hourAngle}deg)`;
   if (DOM.minuteBall) DOM.minuteBall.style.transform = `rotate(${minuteAngle}deg)`;
 }
@@ -402,7 +415,8 @@ function updateDigitalDisplay() {
 
 function setTime12(hour, minute) {
   let h = hour % 12;
-  state.totalMinutes12 = (h * 60) + minute;
+  const snappedMinute = Math.round(minute / 5) * 5;
+  state.totalMinutes12 = (h * 60) + snappedMinute;
   renderClockHands();
   updateDigitalDisplay();
   playSnapSound();
