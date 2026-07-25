@@ -1,6 +1,6 @@
 /**
  * 지우의 시계읽기 - Grade 2 Edition
- * Modern Clean Code Refactored Architecture
+ * Modern Clean Code Refactored Architecture (with 3D Ball Joystick Controllers)
  */
 
 // ==========================================
@@ -9,7 +9,7 @@
 const state = {
   totalMinutes12: 600, // 0 ~ 719 minutes (12 Hours)
   isDragging: false,
-  activeHand: null,    // 'hour' | 'minute' | null
+  activeHand: null,    // 'hour' | 'minute' | 'hour-ball' | 'minute-ball' | null
   prevAngle: 0,
   lastTickMinute: 600,
   currentMode: 'explore', // 'explore' | 'quiz-drag' | 'quiz-choice'
@@ -41,6 +41,12 @@ function cacheDOMElements() {
   DOM.timeSentence = document.getElementById('time-sentence');
   DOM.toggleSound = document.getElementById('toggle-sound');
   DOM.toggleMinuteNumbers = document.getElementById('toggle-minute-numbers');
+
+  // 3D Ball Joystick Elements
+  DOM.hourBallTrack = document.getElementById('hour-ball-track');
+  DOM.minuteBallTrack = document.getElementById('minute-ball-track');
+  DOM.hourBall = document.getElementById('hour-ball');
+  DOM.minuteBall = document.getElementById('minute-ball');
 
   // Tabs & Panels
   DOM.tabs = {
@@ -117,9 +123,7 @@ function playTickSound() {
 
     osc.start();
     osc.stop(ctx.currentTime + 0.03);
-  } catch (e) {
-    // Audio Context fail-safe
-  }
+  } catch (e) {}
 }
 
 function playSnapSound() {
@@ -271,7 +275,7 @@ function createClockElements() {
     DOM.clockFace.appendChild(minEl);
   }
 
-  // Touch & Mouse Drag Hand Event Binding
+  // Touch & Mouse Drag Hand Event Binding (Direct Clock Hand Drag)
   if (hourHand) {
     hourHand.addEventListener('mousedown', (e) => startDrag(e, 'hour'));
     hourHand.addEventListener('touchstart', (e) => startDrag(e, 'hour'), { passive: false });
@@ -282,12 +286,11 @@ function createClockElements() {
     minuteHand.addEventListener('touchstart', (e) => startDrag(e, 'minute'), { passive: false });
   }
 
-  // Sync Minute Numbers Visibility State
   toggleMinuteNumbers();
 }
 
-function getAngleFromEvent(e) {
-  const rect = DOM.analogClock.getBoundingClientRect();
+function getAngleFromEventTarget(e, targetElement) {
+  const rect = targetElement.getBoundingClientRect();
   const centerX = rect.left + rect.width / 2;
   const centerY = rect.top + rect.height / 2;
 
@@ -311,7 +314,11 @@ function startDrag(e, handType) {
 
   state.isDragging = true;
   state.activeHand = handType;
-  state.prevAngle = getAngleFromEvent(e);
+
+  const targetEl = (handType === 'hour-ball') ? DOM.hourBallTrack :
+                   (handType === 'minute-ball') ? DOM.minuteBallTrack : DOM.analogClock;
+
+  state.prevAngle = getAngleFromEventTarget(e, targetEl);
   state.lastTickMinute = Math.round(state.totalMinutes12);
 }
 
@@ -319,16 +326,19 @@ function onDrag(e) {
   if (!state.isDragging || !state.activeHand) return;
   e.preventDefault();
 
-  const currentAngle = getAngleFromEvent(e);
+  const targetEl = (state.activeHand === 'hour-ball') ? DOM.hourBallTrack :
+                   (state.activeHand === 'minute-ball') ? DOM.minuteBallTrack : DOM.analogClock;
+
+  const currentAngle = getAngleFromEventTarget(e, targetEl);
   let delta = currentAngle - state.prevAngle;
 
   if (delta > 180) delta -= 360;
   if (delta < -180) delta += 360;
 
-  if (state.activeHand === 'minute') {
+  if (state.activeHand === 'minute' || state.activeHand === 'minute-ball') {
     let minuteDelta = delta / 6;
     state.totalMinutes12 = (state.totalMinutes12 + minuteDelta + 720) % 720;
-  } else if (state.activeHand === 'hour') {
+  } else if (state.activeHand === 'hour' || state.activeHand === 'hour-ball') {
     let minuteDelta = delta * 2;
     state.totalMinutes12 = (state.totalMinutes12 + minuteDelta + 720) % 720;
   }
@@ -358,13 +368,16 @@ function stopDrag() {
 function renderClockHands() {
   const hourHandEl = document.getElementById('hour-hand');
   const minuteHandEl = document.getElementById('minute-hand');
-  if (!hourHandEl || !minuteHandEl) return;
 
   const minuteAngle = (state.totalMinutes12 % 60) * 6;
   const hourAngle = (state.totalMinutes12 / 720) * 360;
 
-  minuteHandEl.style.transform = `translateX(-50%) rotate(${minuteAngle}deg)`;
-  hourHandEl.style.transform = `translateX(-50%) rotate(${hourAngle}deg)`;
+  if (minuteHandEl) minuteHandEl.style.transform = `translateX(-50%) rotate(${minuteAngle}deg)`;
+  if (hourHandEl) hourHandEl.style.transform = `translateX(-50%) rotate(${hourAngle}deg)`;
+
+  // Also rotate 3D Joystick Spheres for visual feedback!
+  if (DOM.hourBall) DOM.hourBall.style.transform = `rotate(${hourAngle}deg)`;
+  if (DOM.minuteBall) DOM.minuteBall.style.transform = `rotate(${minuteAngle}deg)`;
 }
 
 // ==========================================
@@ -444,7 +457,7 @@ function generateDragQuiz() {
   if (DOM.dragQuizTarget) DOM.dragQuizTarget.innerText = `${h}시 ${mText}`;
 
   if (DOM.dragQuizFeedback) {
-    DOM.dragQuizFeedback.innerText = "시침과 분침을 위 목표 시간에 맞춰보세요!";
+    DOM.dragQuizFeedback.innerText = "손가락으로 입체 공이나 바늘을 움직여 시간을 맞춰보세요!";
     DOM.dragQuizFeedback.className = "quiz-feedback-box";
   }
 
@@ -477,7 +490,7 @@ function checkDragQuizAnswer() {
     if (DOM.dragScoreStreak) DOM.dragScoreStreak.innerText = '0';
 
     if (DOM.dragQuizFeedback) {
-      DOM.dragQuizFeedback.innerText = "❌ 다시 한 번 시계 바늘을 천천히 옮겨보세요.";
+      DOM.dragQuizFeedback.innerText = "❌ 입체 공이나 시계 바늘을 천천히 옮겨보세요.";
       DOM.dragQuizFeedback.className = "quiz-feedback-box error";
     }
     showToast("다시 도전해보세요! 💡", "error");
@@ -588,6 +601,17 @@ function initEventListeners() {
 
   window.addEventListener('mouseup', stopDrag);
   window.addEventListener('touchend', stopDrag);
+
+  // 3D Ball Track Controllers Listeners
+  if (DOM.hourBallTrack) {
+    DOM.hourBallTrack.addEventListener('mousedown', (e) => startDrag(e, 'hour-ball'));
+    DOM.hourBallTrack.addEventListener('touchstart', (e) => startDrag(e, 'hour-ball'), { passive: false });
+  }
+
+  if (DOM.minuteBallTrack) {
+    DOM.minuteBallTrack.addEventListener('mousedown', (e) => startDrag(e, 'minute-ball'));
+    DOM.minuteBallTrack.addEventListener('touchstart', (e) => startDrag(e, 'minute-ball'), { passive: false });
+  }
 
   // Resize Engine
   let resizeTimer;

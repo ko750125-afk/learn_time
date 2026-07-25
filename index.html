@@ -101,9 +101,26 @@
           </div>
         </div>
 
-        <div class="clock-footer-hint">
-          <i data-lucide="volume-2"></i>
-          <span>바늘을 움직이면 째깍째깍 경쾌한 효과음이 들려요!</span>
+        <!-- 3D Sphere Joystick Controllers (Prevents fingers from blocking the clock) -->
+        <div class="ball-controllers-wrapper">
+          <div class="ball-controller-card">
+            <span class="ball-label">🔴 시침 공 조작 (시)</span>
+            <div class="ball-track" id="hour-ball-track">
+              <div class="sphere-3d hour-sphere" id="hour-ball">
+                <div class="sphere-shine"></div>
+                <div class="sphere-indicator"></div>
+              </div>
+            </div>
+          </div>
+          <div class="ball-controller-card">
+            <span class="ball-label">🔵 분침 공 조작 (분)</span>
+            <div class="ball-track" id="minute-ball-track">
+              <div class="sphere-3d minute-sphere" id="minute-ball">
+                <div class="sphere-shine"></div>
+                <div class="sphere-indicator"></div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
