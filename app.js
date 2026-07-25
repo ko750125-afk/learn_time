@@ -1,6 +1,6 @@
 /**
  * 지우의 시계읽기 - Grade 2 Edition
- * Modern Clean Code Refactored Architecture (with 5-Min Precision Snap & 3D Ball Joystick)
+ * Modern Clean Code Refactored Architecture (with Real-time 5-Min Drag Snap & 3D Ball Joystick)
  */
 
 // ==========================================
@@ -319,7 +319,7 @@ function startDrag(e, handType) {
                    (handType === 'minute-ball') ? DOM.minuteBallTrack : DOM.analogClock;
 
   state.prevAngle = getAngleFromEventTarget(e, targetEl);
-  state.lastTickMinute = Math.round(state.totalMinutes12);
+  state.lastTickMinute = Math.round(state.totalMinutes12 / 5) * 5;
 }
 
 function onDrag(e) {
@@ -335,38 +335,32 @@ function onDrag(e) {
   if (delta > 180) delta -= 360;
   if (delta < -180) delta += 360;
 
+  let rawMinutes = state.totalMinutes12;
   if (state.activeHand === 'minute' || state.activeHand === 'minute-ball') {
     let minuteDelta = delta / 6;
-    state.totalMinutes12 = (state.totalMinutes12 + minuteDelta + 720) % 720;
+    rawMinutes = (rawMinutes + minuteDelta + 720) % 720;
   } else if (state.activeHand === 'hour' || state.activeHand === 'hour-ball') {
     let minuteDelta = delta * 2;
-    state.totalMinutes12 = (state.totalMinutes12 + minuteDelta + 720) % 720;
+    rawMinutes = (rawMinutes + minuteDelta + 720) % 720;
   }
 
-  const currentMins = Math.round(state.totalMinutes12);
-  if (Math.abs(currentMins - state.lastTickMinute) >= 1) {
+  // Real-time 5-Minute Precision Magnet Snap Engine
+  // Locks totalMinutes12 exclusively to multiples of 5 (0, 5, 10, 15 ... 55, 60) during active drag!
+  const snappedMinutes = (Math.round(rawMinutes / 5) * 5 + 720) % 720;
+
+  if (snappedMinutes !== state.totalMinutes12) {
+    state.totalMinutes12 = snappedMinutes;
     playTickSound();
-    state.lastTickMinute = currentMins;
+    renderClockHands();
+    updateDigitalDisplay();
+    state.prevAngle = currentAngle;
   }
-
-  state.prevAngle = currentAngle;
-  renderClockHands();
-  updateDigitalDisplay();
 }
 
-/**
- * 5-Minute Precision Magnet Snap Engine
- * Resolves any 1-minute offset error by rounding exact integer minutes to multiples of 5 (0, 5, 10, ... 55)
- */
 function stopDrag() {
   if (state.isDragging) {
-    // Step 1: Round to exact integer minute
-    const exactMins = Math.round(state.totalMinutes12);
-    // Step 2: Snap exactly to nearest 5-minute mark (0, 5, 10, ... 55, 60)
-    const snappedMins = Math.round(exactMins / 5) * 5;
-    
-    // Step 3: Modulo 720 for 12-hour clock boundary condition safety
-    state.totalMinutes12 = (snappedMins + 720) % 720;
+    const snappedMins = (Math.round(state.totalMinutes12 / 5) * 5 + 720) % 720;
+    state.totalMinutes12 = snappedMins;
 
     renderClockHands();
     updateDigitalDisplay();
