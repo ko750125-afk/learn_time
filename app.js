@@ -1,6 +1,6 @@
 /**
  * Modern Clock Studio - Grade 2 Edition
- * Realtime Web Audio API Sound Feedback Engine
+ * Dynamic Responsive Radius Engine for All Mobile Devices
  */
 
 // Global State (0 ~ 719 minutes = 12 Hours)
@@ -37,9 +37,6 @@ function getAudioContext() {
   return audioCtx;
 }
 
-/**
- * Play Realtime Tick Sound during hand drag
- */
 function playTickSound() {
   const toggleSound = document.getElementById('toggle-sound');
   if (toggleSound && !toggleSound.checked) return;
@@ -63,14 +60,9 @@ function playTickSound() {
 
     osc.start();
     osc.stop(ctx.currentTime + 0.03);
-  } catch (e) {
-    // Silent fail if browser audio policy blocks
-  }
+  } catch (e) {}
 }
 
-/**
- * Play Snap Click Sound on hand release (5-min snap)
- */
 function playSnapSound() {
   const toggleSound = document.getElementById('toggle-sound');
   if (toggleSound && !toggleSound.checked) return;
@@ -97,9 +89,6 @@ function playSnapSound() {
   } catch (e) {}
 }
 
-/**
- * Play Quiz Success Melody (Do-Mi-Sol Fanfare)
- */
 function playSuccessSound() {
   const toggleSound = document.getElementById('toggle-sound');
   if (toggleSound && !toggleSound.checked) return;
@@ -108,7 +97,7 @@ function playSuccessSound() {
     const ctx = getAudioContext();
     if (!ctx) return;
 
-    const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+    const notes = [523.25, 659.25, 783.99, 1046.50];
     notes.forEach((freq, idx) => {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
@@ -128,9 +117,6 @@ function playSuccessSound() {
   } catch (e) {}
 }
 
-/**
- * Play Quiz Error Sound
- */
 function playErrorSound() {
   const toggleSound = document.getElementById('toggle-sound');
   if (toggleSound && !toggleSound.checked) return;
@@ -170,9 +156,22 @@ const toggleMinuteNumbersCheck = document.getElementById('toggle-minute-numbers'
 document.addEventListener('DOMContentLoaded', () => {
   createClockElements();
   initEventListeners();
-  setTime12(10, 0); // Start at 10:00
+  setTime12(10, 0);
 });
 
+// Re-render responsive clock layout on window resize
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    createClockElements();
+    renderClockHands();
+  }, 100);
+});
+
+/**
+ * Render Responsive Clock Elements (Dynamic Radius Calculation)
+ */
 function createClockElements() {
   clockFace.innerHTML = `
     <div class="clock-center"></div>
@@ -192,12 +191,14 @@ function createClockElements() {
   const faceWidth = clockFace.clientWidth || 316;
   const faceHeight = clockFace.clientHeight || 316;
   
+  // Dynamic Exact Center Calculation
   const centerX = (faceWidth / 2) - 3;
   const centerY = (faceHeight / 2) - 4;
 
-  const tickRadius = 142;
-  const hourRadius = 104;
-  const minuteOuterRadius = 175;
+  // Dynamic Ratio-based Radii (Works perfectly on mobile & desktop)
+  const tickRadius = faceWidth * 0.44;
+  const hourRadius = faceWidth * 0.325;
+  const minuteOuterRadius = faceWidth * 0.545;
 
   // 1. Ticks (60 total)
   for (let i = 0; i < 60; i++) {
@@ -279,7 +280,7 @@ function getAngleFromEvent(e) {
 function startDrag(e, handType) {
   e.preventDefault();
   e.stopPropagation();
-  getAudioContext(); // Resume audio context on user interaction
+  getAudioContext();
   isDragging = true;
   activeHand = handType;
   prevAngle = getAngleFromEvent(e);
@@ -304,7 +305,6 @@ function onDrag(e) {
     totalMinutes12 = (totalMinutes12 + minuteDelta + 720) % 720;
   }
 
-  // Play tick sound whenever time changes by 1 minute interval
   const currentMins = Math.round(totalMinutes12);
   if (Math.abs(currentMins - lastTickMinute) >= 1) {
     playTickSound();
@@ -321,7 +321,7 @@ function stopDrag() {
     totalMinutes12 = (Math.round(totalMinutes12 / 5) * 5) % 720;
     renderClockHands();
     updateDigitalDisplay();
-    playSnapSound(); // Play snap click sound on release!
+    playSnapSound();
   }
   isDragging = false;
   activeHand = null;

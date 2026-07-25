@@ -44,6 +44,7 @@ body {
   align-items: center;
   padding: 1.5rem;
   position: relative;
+  overflow-x: hidden;
 }
 
 .app-container {
@@ -219,14 +220,18 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
 }
 
 .clock-viewport {
   position: relative;
-  padding: 35px;
+  padding: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
+  max-width: 100%;
+  overflow: visible;
 }
 
 .analog-clock {
@@ -238,6 +243,7 @@ body {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), inset 0 2px 10px rgba(0, 0, 0, 0.06);
   position: relative;
   touch-action: none;
+  margin: 0 auto;
 }
 
 .clock-face {
@@ -306,7 +312,6 @@ body {
   white-space: nowrap;
 }
 
-/* Base Hand Styles - NO TRANSITION during drag for instant smooth motion! */
 .hand {
   position: absolute;
   top: calc(50% - 4px);
@@ -318,13 +323,12 @@ body {
 
 .hand:active { cursor: grabbing; }
 
-/* Hour Hand (Short Hand) */
 .hour-hand {
-  width: 14px; /* Increased hit area width */
-  height: 80px;
+  width: 14px;
+  height: calc(var(--clock-size) * 0.24);
   z-index: 10;
-  margin-top: -80px;
-  margin-left: -3px; /* Center alignment for wider hitbox */
+  margin-top: calc(var(--clock-size) * -0.24);
+  margin-left: -3px;
 }
 
 .hour-hand .hand-line {
@@ -349,12 +353,11 @@ body {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
-/* Minute Hand (Long Hand - Higher Z-Index for easy grab) */
 .minute-hand {
-  width: 14px; /* Increased hit area width for easy drag */
-  height: 125px;
-  z-index: 15; /* Always on top of hour hand */
-  margin-top: -125px;
+  width: 14px;
+  height: calc(var(--clock-size) * 0.36);
+  z-index: 15;
+  margin-top: calc(var(--clock-size) * -0.36);
   margin-left: -3px;
 }
 
@@ -387,6 +390,7 @@ body {
   font-size: 0.825rem;
   color: var(--muted-foreground);
   margin-top: 1rem;
+  text-align: center;
 }
 
 .mode-panel {
@@ -447,7 +451,7 @@ body {
 
 .preset-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 0.5rem;
 }
 
@@ -641,3 +645,59 @@ body {
 
 .shadcn-toast.success { background: #16a34a; }
 .shadcn-toast.error { background: #dc2626; }
+
+/* Perfect Mobile Responsive Layout Rules */
+@media (max-width: 520px) {
+  body {
+    padding: 0.5rem 0.25rem;
+  }
+  
+  :root {
+    --clock-size: clamp(220px, 64vw, 260px);
+  }
+
+  .card {
+    padding: 0.85rem;
+  }
+
+  .clock-viewport {
+    padding: 22px 5px;
+    width: 100%;
+  }
+
+  .clock-number {
+    font-size: 1.05rem;
+  }
+
+  .minute-number-outer {
+    font-size: 0.65rem;
+    padding: 1px 3px;
+  }
+
+  .digit-box {
+    font-size: 2.15rem;
+    padding: 0.4rem 0.85rem;
+  }
+
+  .colon {
+    font-size: 1.8rem;
+  }
+
+  .app-header {
+    padding: 0.65rem 0.85rem;
+  }
+
+  .shadcn-tabs {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .tab-item {
+    font-size: 0.78rem;
+    padding: 0.35rem 0.5rem;
+  }
+
+  .preset-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
