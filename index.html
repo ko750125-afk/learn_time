@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>아날로그 시계 배움터 - 초등 2학년 맞춤</title>
+  <title>지우의 시계읽기 - 스스로 시간 읽기</title>
   <!-- Google Fonts: Inter & Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -56,8 +56,8 @@
             <i data-lucide="disc"></i>
             <h2>아날로그 시계</h2>
           </div>
-          <!-- Guide & Sound Toggles -->
-          <div class="guide-toggle-wrapper" style="display: flex; gap: 1rem;">
+          <!-- Guide & Sound Toggles Right Aligned with Margin -->
+          <div class="guide-toggle-wrapper">
             <label class="shadcn-switch">
               <input type="checkbox" id="toggle-sound" checked>
               <span class="switch-slider"></span>
@@ -80,11 +80,13 @@
 
               <!-- Hour Hand -->
               <div class="hand hour-hand" id="hour-hand">
+                <div class="hand-line"></div>
                 <div class="hand-cap"></div>
               </div>
 
               <!-- Minute Hand -->
               <div class="hand minute-hand" id="minute-hand">
+                <div class="hand-line"></div>
                 <div class="hand-cap"></div>
               </div>
             </div>

@@ -158,7 +158,10 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1.5rem;
   margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  width: 100%; /* Ensures full width layout inside card */
 }
 
 .header-title {
@@ -166,6 +169,7 @@ body {
   align-items: center;
   gap: 0.5rem;
   color: var(--foreground);
+  white-space: nowrap;
 }
 
 .header-title h2 {
@@ -173,11 +177,20 @@ body {
   font-weight: 600;
 }
 
+/* Right-aligned Toggles with generous left margin & gap */
+.guide-toggle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-left: auto; /* Pushes toggles to the far right with spacious margin */
+}
+
 .shadcn-switch {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .shadcn-switch input { display: none; }
@@ -325,10 +338,8 @@ body {
 .hand:active { cursor: grabbing; }
 
 /* Real Clock Pointer Needle Shape (Sword / Pointer Needle Design) */
-
-/* Hour Hand (Short Tapered Pointer Hand) */
 .hour-hand {
-  width: 18px; /* Hitbox width */
+  width: 18px;
   height: calc(var(--clock-size) * 0.25);
   z-index: 10;
   margin-top: calc(var(--clock-size) * -0.25);
@@ -342,7 +353,6 @@ body {
   width: 12px;
   height: 100%;
   background: #1e293b;
-  /* Sword needle taper shape with sharp pointed tip */
   clip-path: polygon(50% 0%, 90% 20%, 65% 100%, 35% 100%, 10% 20%);
   filter: drop-shadow(0 3px 6px rgba(0,0,0,0.3));
 }
@@ -360,9 +370,8 @@ body {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* Minute Hand (Long Tapered Sword Pointer Hand) */
 .minute-hand {
-  width: 18px; /* Hitbox width */
+  width: 18px;
   height: calc(var(--clock-size) * 0.37);
   z-index: 15;
   margin-top: calc(var(--clock-size) * -0.37);
@@ -376,7 +385,6 @@ body {
   width: 10px;
   height: 100%;
   background: #2563eb;
-  /* Elegant long sword needle shape with sharp tip */
   clip-path: polygon(50% 0%, 90% 15%, 60% 100%, 40% 100%, 10% 15%);
   filter: drop-shadow(0 3px 8px rgba(37, 99, 235, 0.4));
 }
@@ -710,5 +718,11 @@ body {
 
   .preset-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .guide-toggle-wrapper {
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-end;
   }
 }
