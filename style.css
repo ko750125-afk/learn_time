@@ -268,8 +268,8 @@ body {
 
 .clock-center {
   position: absolute;
-  top: calc(50% - 4px);
-  left: calc(50% - 3px);
+  top: 50%;
+  left: 50%;
   width: 16px;
   height: 16px;
   background: #0f172a;
@@ -325,11 +325,11 @@ body {
   white-space: nowrap;
 }
 
-/* Base Hand Styles */
+/* Base Hand Styles - 0px Geometry Exact Center */
 .hand {
   position: absolute;
-  top: calc(50% - 4px);
-  left: calc(50% - 3px);
+  top: 50%;
+  left: 50%;
   transform-origin: 50% 100%;
   cursor: grab;
   touch-action: none;
@@ -337,16 +337,15 @@ body {
 
 .hand:active { cursor: grabbing; }
 
-/* Real Clock Pointer Needle Shape (Sword / Pointer Needle Design) */
+/* Real Clock Pointer Needle Shape */
 .hour-hand {
-  width: 18px;
-  height: calc(var(--clock-size) * 0.25);
+  width: 16px;
+  height: calc(var(--clock-size) * 0.26);
   z-index: 10;
-  margin-top: calc(var(--clock-size) * -0.25);
-  margin-left: -5px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  transform: translate(-50%, -100%);
 }
 
 .hour-hand .hand-line {
@@ -371,14 +370,13 @@ body {
 }
 
 .minute-hand {
-  width: 18px;
-  height: calc(var(--clock-size) * 0.37);
+  width: 16px;
+  height: calc(var(--clock-size) * 0.38);
   z-index: 15;
-  margin-top: calc(var(--clock-size) * -0.37);
-  margin-left: -5px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  transform: translate(-50%, -100%);
 }
 
 .minute-hand .hand-line {

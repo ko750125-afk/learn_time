@@ -1,6 +1,6 @@
 /**
  * 지우의 시계읽기 - Grade 2 Edition
- * Modern Clean Code Refactored Architecture (with Real-time 5-Min Drag Snap & 3D Ball Joystick)
+ * Modern Clean Code Architecture (0px Exact Geometry Alignment & Real-time 5-Min Snap)
  */
 
 // ==========================================
@@ -224,8 +224,9 @@ function createClockElements() {
   const faceWidth = DOM.clockFace.clientWidth || 316;
   const faceHeight = DOM.clockFace.clientHeight || 316;
 
-  const centerX = (faceWidth / 2) - 3;
-  const centerY = (faceHeight / 2) - 4;
+  // Exact 50% Center Point (Zero Pixel Offset)
+  const centerX = faceWidth / 2;
+  const centerY = faceHeight / 2;
 
   const tickRadius = faceWidth * 0.44;
   const hourRadius = faceWidth * 0.325;
@@ -275,7 +276,7 @@ function createClockElements() {
     DOM.clockFace.appendChild(minEl);
   }
 
-  // Touch & Mouse Drag Hand Event Binding (Direct Clock Hand Drag)
+  // Touch & Mouse Drag Hand Event Binding
   if (hourHand) {
     hourHand.addEventListener('mousedown', (e) => startDrag(e, 'hour'));
     hourHand.addEventListener('touchstart', (e) => startDrag(e, 'hour'), { passive: false });
@@ -345,7 +346,6 @@ function onDrag(e) {
   }
 
   // Real-time 5-Minute Precision Magnet Snap Engine
-  // Locks totalMinutes12 exclusively to multiples of 5 (0, 5, 10, 15 ... 55, 60) during active drag!
   const snappedMinutes = (Math.round(rawMinutes / 5) * 5 + 720) % 720;
 
   if (snappedMinutes !== state.totalMinutes12) {
@@ -379,8 +379,8 @@ function renderClockHands() {
   // Exact hour angle (0.5 deg per minute = 360 deg per 720 minutes)
   const hourAngle = (state.totalMinutes12 / 720) * 360;
 
-  if (minuteHandEl) minuteHandEl.style.transform = `translateX(-50%) rotate(${minuteAngle}deg)`;
-  if (hourHandEl) hourHandEl.style.transform = `translateX(-50%) rotate(${hourAngle}deg)`;
+  if (minuteHandEl) minuteHandEl.style.transform = `translate(-50%, -100%) rotate(${minuteAngle}deg)`;
+  if (hourHandEl) hourHandEl.style.transform = `translate(-50%, -100%) rotate(${hourAngle}deg)`;
 
   // Rotate 3D Joystick Spheres for visual feedback
   if (DOM.hourBall) DOM.hourBall.style.transform = `rotate(${hourAngle}deg)`;
