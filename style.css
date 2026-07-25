@@ -312,6 +312,7 @@ body {
   white-space: nowrap;
 }
 
+/* Base Hand Styles */
 .hand {
   position: absolute;
   top: calc(50% - 4px);
@@ -323,64 +324,74 @@ body {
 
 .hand:active { cursor: grabbing; }
 
+/* Real Clock Pointer Needle Shape (Sword / Pointer Needle Design) */
+
+/* Hour Hand (Short Tapered Pointer Hand) */
 .hour-hand {
-  width: 14px;
-  height: calc(var(--clock-size) * 0.24);
+  width: 18px; /* Hitbox width */
+  height: calc(var(--clock-size) * 0.25);
   z-index: 10;
-  margin-top: calc(var(--clock-size) * -0.24);
-  margin-left: -3px;
+  margin-top: calc(var(--clock-size) * -0.25);
+  margin-left: -5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .hour-hand .hand-line {
-  width: 8px;
+  width: 12px;
   height: 100%;
   background: #1e293b;
-  border-radius: 8px 8px 2px 2px;
-  margin: 0 auto;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  /* Sword needle taper shape with sharp pointed tip */
+  clip-path: polygon(50% 0%, 90% 20%, 65% 100%, 35% 100%, 10% 20%);
+  filter: drop-shadow(0 3px 6px rgba(0,0,0,0.3));
 }
 
 .hour-hand .hand-cap {
   position: absolute;
-  top: -10px;
+  top: 15%;
   left: 50%;
   transform: translateX(-50%);
-  width: 20px;
-  height: 20px;
-  background: #1e293b;
-  border: 3px solid #ffffff;
+  width: 14px;
+  height: 14px;
+  background: #0f172a;
+  border: 2px solid #ffffff;
   border-radius: 50%;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
+/* Minute Hand (Long Tapered Sword Pointer Hand) */
 .minute-hand {
-  width: 14px;
-  height: calc(var(--clock-size) * 0.36);
+  width: 18px; /* Hitbox width */
+  height: calc(var(--clock-size) * 0.37);
   z-index: 15;
-  margin-top: calc(var(--clock-size) * -0.36);
-  margin-left: -3px;
+  margin-top: calc(var(--clock-size) * -0.37);
+  margin-left: -5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .minute-hand .hand-line {
-  width: 6px;
+  width: 10px;
   height: 100%;
   background: #2563eb;
-  border-radius: 6px 6px 2px 2px;
-  margin: 0 auto;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+  /* Elegant long sword needle shape with sharp tip */
+  clip-path: polygon(50% 0%, 90% 15%, 60% 100%, 40% 100%, 10% 15%);
+  filter: drop-shadow(0 3px 8px rgba(37, 99, 235, 0.4));
 }
 
 .minute-hand .hand-cap {
   position: absolute;
-  top: -10px;
+  top: 10%;
   left: 50%;
   transform: translateX(-50%);
-  width: 20px;
-  height: 20px;
+  width: 14px;
+  height: 14px;
   background: #2563eb;
-  border: 3px solid #ffffff;
+  border: 2px solid #ffffff;
   border-radius: 50%;
-  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.4);
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.5);
 }
 
 .clock-footer-hint {
@@ -646,7 +657,7 @@ body {
 .shadcn-toast.success { background: #16a34a; }
 .shadcn-toast.error { background: #dc2626; }
 
-/* Perfect Mobile Responsive Layout Rules */
+/* Responsive Adjustments for Mobile Viewports */
 @media (max-width: 520px) {
   body {
     padding: 0.5rem 0.25rem;
