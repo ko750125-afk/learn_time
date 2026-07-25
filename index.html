@@ -5,6 +5,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>지우의 시계읽기 - 스스로 시간 읽기</title>
+  <!-- PWA & Mobile App Icons -->
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#4f46e5">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="지우의 시계읽기">
   <!-- Google Fonts: Inter & Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,15 +40,15 @@
 
       <!-- Mode Selector Tabs -->
       <div class="shadcn-tabs">
-        <button id="tab-explore" class="tab-item active" onclick="setMode('explore')">
+        <button id="tab-explore" class="tab-item active" data-mode="explore">
           <i data-lucide="compass"></i>
           <span>탐색하기</span>
         </button>
-        <button id="tab-quiz-drag" class="tab-item" onclick="setMode('quiz-drag')">
+        <button id="tab-quiz-drag" class="tab-item" data-mode="quiz-drag">
           <i data-lucide="hand-metal"></i>
           <span>시계 맞추기</span>
         </button>
-        <button id="tab-quiz-choice" class="tab-item" onclick="setMode('quiz-choice')">
+        <button id="tab-quiz-choice" class="tab-item" data-mode="quiz-choice">
           <i data-lucide="help-circle"></i>
           <span>객관식 퀴즈</span>
         </button>
@@ -64,7 +72,7 @@
               <span class="switch-text">🔊 효과음</span>
             </label>
             <label class="shadcn-switch">
-              <input type="checkbox" id="toggle-minute-numbers" checked onchange="toggleMinuteNumbers()">
+              <input type="checkbox" id="toggle-minute-numbers" checked>
               <span class="switch-slider"></span>
               <span class="switch-text">분 숫자</span>
             </label>
@@ -129,12 +137,12 @@
           <div class="card preset-card">
             <h3>쉬운 시간 바로 맞추기</h3>
             <div class="preset-grid">
-              <button class="shadcn-btn btn-outline" onclick="setTime12(9, 0)">9시 정각 🕘</button>
-              <button class="shadcn-btn btn-outline" onclick="setTime12(12, 30)">12시 30분 🕧</button>
-              <button class="shadcn-btn btn-outline" onclick="setTime12(3, 15)">3시 15분 🕒</button>
-              <button class="shadcn-btn btn-outline" onclick="setTime12(6, 45)">6시 45분 🕕</button>
-              <button class="shadcn-btn btn-outline" onclick="setTime12(10, 10)">10시 10분 🕙</button>
-              <button class="shadcn-btn btn-secondary" onclick="setTimeToCurrent()">현재 시간 🕒</button>
+              <button class="shadcn-btn btn-outline preset-btn" data-hour="9" data-minute="0">9시 정각 🕘</button>
+              <button class="shadcn-btn btn-outline preset-btn" data-hour="12" data-minute="30">12시 30분 🕧</button>
+              <button class="shadcn-btn btn-outline preset-btn" data-hour="3" data-minute="15">3시 15분 🕒</button>
+              <button class="shadcn-btn btn-outline preset-btn" data-hour="6" data-minute="45">6시 45분 🕕</button>
+              <button class="shadcn-btn btn-outline preset-btn" data-hour="10" data-minute="10">10시 10분 🕙</button>
+              <button class="shadcn-btn btn-secondary" id="btn-current-time">현재 시간 🕒</button>
             </div>
           </div>
         </div>
@@ -159,10 +167,10 @@
             </div>
 
             <div class="quiz-action-buttons">
-              <button class="shadcn-btn btn-primary btn-lg" onclick="checkDragQuizAnswer()">
+              <button class="shadcn-btn btn-primary btn-lg" id="btn-check-drag">
                 <i data-lucide="check-circle-2"></i> 정답 확인하기
               </button>
-              <button class="shadcn-btn btn-outline" onclick="generateDragQuiz()">
+              <button class="shadcn-btn btn-outline" id="btn-next-drag">
                 <i data-lucide="refresh-cw"></i> 다음 문제
               </button>
             </div>

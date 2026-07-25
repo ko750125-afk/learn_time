@@ -1,0 +1,26 @@
+{
+  "name": "지우의 시계읽기",
+  "short_name": "시계읽기",
+  "description": "방학 동안 스스로 시계 읽기 습관을 기르는 아날로그/디지털 시계 학습 앱",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4f46e5",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}
